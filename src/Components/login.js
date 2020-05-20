@@ -17,6 +17,7 @@ class Login extends React.Component {
       toggleHeader: 0,
       username: '',
       password: '',
+      emailId: '',
       secureTextEntryValue: true,
     };
   }
@@ -120,7 +121,80 @@ class Login extends React.Component {
           </View>
         ) : (
           <View style={styles.bottomView}>
-            <Text>Sign Up</Text>
+            <View style={styles.bottomIconView}>
+              <View style={styles.iconImageView}>
+                <TouchableOpacity>
+                  <Image
+                    source={imageConstants.camera}
+                    style={styles.imageIcon}
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+            <View style={styles.textInputFieldsView}>
+              <View style={styles.textInputBoxView}>
+                <TextInput
+                  style={styles.textInputTextView}
+                  placeholder={'Email address'}
+                  placeholderTextColor={'#7d7d7d'}
+                />
+              </View>
+              <View style={styles.textInputBoxView}>
+                <TextInput
+                  style={styles.textInputTextView}
+                  placeholder={'Username'}
+                  placeholderTextColor={'#7d7d7d'}
+                />
+              </View>
+              <View style={styles.textInputBoxView}>
+                <View style={styles.passwordBoxInput}>
+                  <TextInput
+                    style={styles.textInputTextView}
+                    placeholder={'Password'}
+                    placeholderTextColor={'#7d7d7d'}
+                    secureTextEntry={secureTextEntryValue}
+                  />
+                </View>
+                <View style={styles.eyeImageView}>
+                  <TouchableOpacity
+                    onPress={() => this.toggleSecureTextInput()}>
+                    <Image source={imageConstants.eye} />
+                  </TouchableOpacity>
+                </View>
+              </View>
+              <View style={styles.textInputBoxView}>
+                <View style={styles.passwordBoxInput}>
+                  <TextInput
+                    style={styles.textInputTextView}
+                    placeholder={'Repeat Password'}
+                    placeholderTextColor={'#7d7d7d'}
+                    secureTextEntry={secureTextEntryValue}
+                  />
+                </View>
+                <View style={styles.eyeImageView}>
+                  <TouchableOpacity
+                    onPress={() => this.toggleSecureTextInput()}>
+                    <Image source={imageConstants.eye} />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+            <View style={styles.buttonFlexView}>
+              <TouchableOpacity style={styles.loginButtonView}>
+                <View style={styles.loginView}>
+                  <Image
+                    source={imageConstants.tick}
+                    style={styles.tickImageView}
+                  />
+                  <Text style={styles.loginTextView}>SIGN UP</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.termsCondition}>
+              <TouchableOpacity>
+                <Text style={styles.loginWithText}>Terms of Service</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         )}
       </SafeAreaView>
@@ -135,9 +209,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   loginWithView: {flex: 0.15, alignItems: 'center', justifyContent: 'flex-end'},
+  termsCondition: {
+    height: 20,
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+  },
   loginWithText: {fontWeight: '500', color: colorConstants.otherTextColor},
   LoginWithIconsView: {
-    flex: 0.15,
+    flex: 0.2,
     flexDirection: 'row',
     marginHorizontal: 40,
     alignItems: 'center',
@@ -238,15 +317,14 @@ const styles = StyleSheet.create({
     borderWidth: 3,
   },
   imageIcon: {
-    height: 60,
-    width: 60,
+    height: 50,
+    width: 50,
     margin: 4,
     resizeMode: 'contain',
   },
   textInputFieldsView: {
-    flex: 0.25,
+    flex: 0.5,
     alignItems: 'center',
-    // backgroundColor: 'red',
     marginTop: 20,
   },
 });
