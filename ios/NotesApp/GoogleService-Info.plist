@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>240825025999-6si0p558njgg0kqinv4btu3pe40nij1g.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.240825025999-6si0p558njgg0kqinv4btu3pe40nij1g</string>
+	<key>API_KEY</key>
+	<string>AIzaSyC-p7WAOazahPog1-5fx0Fl8uxoCODXVJ8</string>
+	<key>GCM_SENDER_ID</key>
+	<string>240825025999</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>org.reactjs.native.example.NotesApp</string>
+	<key>PROJECT_ID</key>
+	<string>notesapp-1a3df</string>
+	<key>STORAGE_BUCKET</key>
+	<string>notesapp-1a3df.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:240825025999:ios:04c7fe21e4faa9cf66beba</string>
+	<key>DATABASE_URL</key>
+	<string>https://notesapp-1a3df.firebaseio.com</string>
+</dict>
+</plist>

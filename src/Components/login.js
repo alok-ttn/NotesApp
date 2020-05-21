@@ -9,6 +9,9 @@ import {
   TouchableOpacity,
   Animated,
 } from 'react-native';
+import ActivityIndicator from './activityIndicator';
+import {GoogleSignin, statusCodes} from '@react-native-community/google-signin';
+import {LoginManager} from 'react-native-fbsdk';
 import {colorConstants, imageConstants} from '../config/constants';
 class Login extends React.Component {
   constructor(props) {
@@ -23,7 +26,49 @@ class Login extends React.Component {
       emailValidate: true,
       secureTextEntryValue: true,
       matchPassword: true,
+      userInfo: '',
     };
+  }
+
+  // Somewhere in your code
+  signIn = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      this.setState({userInfo: userInfo});
+      console.warn(userInfo);
+    } catch (error) {
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        // user cancelled the login flow
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        // operation (e.g. sign in) is in progress already
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        // play services not available or outdated
+      } else {
+        // some other error happened
+      }
+    }
+  };
+  handleFacebookLogin() {
+    LoginManager.logInWithPermissions([
+      'public_profile',
+      'email',
+      'user_friends',
+    ]).then(
+      function(result) {
+        if (result.isCancelled) {
+          console.log('Login cancelled');
+        } else {
+          console.log(
+            'Login success with permissions: ' +
+              result.grantedPermissions.toString(),
+          );
+        }
+      },
+      function(error) {
+        console.log('Login fail with error: ' + error);
+      },
+    );
   }
   validate(text, type) {
     var userNameRegex = /^\S{4,}$/;
@@ -77,6 +122,7 @@ class Login extends React.Component {
       passwordValidate,
       emailValidate,
     } = this.state;
+    const {navigation} = this.props;
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.headerView}>
@@ -154,7 +200,9 @@ class Login extends React.Component {
               </View>
             </View>
             <View style={styles.buttonFlexView}>
-              <TouchableOpacity style={styles.loginButtonView}>
+              <TouchableOpacity
+                style={styles.loginButtonView}
+                onPress={() => navigation.navigate('notesList')}>
                 <View style={styles.loginView}>
                   <Image
                     source={imageConstants.tick}
@@ -168,7 +216,7 @@ class Login extends React.Component {
               <Text style={styles.loginWithText}>Login with</Text>
             </View>
             <View style={styles.LoginWithIconsView}>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => this.signIn()}>
                 <Image source={imageConstants.googlePlus} />
               </TouchableOpacity>
               <TouchableOpacity>
@@ -177,7 +225,7 @@ class Login extends React.Component {
               <TouchableOpacity>
                 <Image source={imageConstants.twitter} />
               </TouchableOpacity>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => this.handleFacebookLogin()}>
                 <Image source={imageConstants.facebook} />
               </TouchableOpacity>
             </View>
@@ -296,7 +344,12 @@ class Login extends React.Component {
     );
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    GoogleSignin.configure({
+      webClientId:
+        '240825025999-vmuqtfaeqitqmchvno27fc9sgk3a3loq.apps.googleusercontent.com', // client ID of type WEB for your server (needed to verify user ID and offline access)
+    });
+  }
 }
 
 const styles = StyleSheet.create({
