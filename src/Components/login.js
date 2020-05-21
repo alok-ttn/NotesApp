@@ -16,10 +16,48 @@ class Login extends React.Component {
     this.state = {
       toggleHeader: 0,
       username: '',
+      usernameValidate: true,
       password: '',
-      emailId: '',
+      passwordValidate: true,
+      email: '',
+      emailValidate: true,
       secureTextEntryValue: true,
+      matchPassword: true,
     };
+  }
+  validate(text, type) {
+    var userNameRegex = /^\S{4,}$/;
+    var passwordRegex = /^[a-zA-Z0-9!@#$%^&*]{6}$/;
+    var emailRegex = /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/;
+    if (type === 'username') {
+      if (userNameRegex.test(text)) {
+        this.setState({usernameValidate: true});
+        this.setState({username: text});
+      } else {
+        this.setState({usernameValidate: false});
+      }
+    } else if (type === 'password') {
+      if (passwordRegex.test(text)) {
+        this.setState({passwordValidate: true});
+        this.setState({password: text});
+      } else {
+        this.setState({passwordValidate: false});
+      }
+    } else if (type === 'email') {
+      if (emailRegex.test(text)) {
+        this.setState({emailValidate: true});
+        this.setState({email: text});
+      } else {
+        this.setState({emailValidate: false});
+      }
+    }
+  }
+  matchPassword(text) {
+    if (text === this.state.password) {
+      this.setState({matchPassword: true});
+    } else {
+      this.setState({matchPassword: false});
+    }
   }
   animate = () => {
     this.setState({toggleHeader: this.state.toggleHeader === 0 ? 1 : 0});
@@ -29,7 +67,16 @@ class Login extends React.Component {
   }
   onChangeText(input) {}
   render() {
-    const {secureTextEntryValue, username, password, toggleHeader} = this.state;
+    const {
+      secureTextEntryValue,
+      username,
+      password,
+      toggleHeader,
+      usernameValidate,
+      matchPassword,
+      passwordValidate,
+      emailValidate,
+    } = this.state;
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.headerView}>
@@ -61,20 +108,36 @@ class Login extends React.Component {
               </View>
             </View>
             <View style={styles.textInputFieldsView}>
-              <View style={styles.textInputBoxView}>
+              <View
+                style={
+                  usernameValidate
+                    ? styles.textInputBoxView
+                    : styles.textInputBoxViewError
+                }>
                 <TextInput
                   style={styles.textInputTextView}
                   placeholder={'Username or email address'}
                   placeholderTextColor={'#7d7d7d'}
+                  onChangeText={text => {
+                    this.validate(text, 'username');
+                  }}
                 />
               </View>
-              <View style={styles.textInputBoxView}>
+              <View
+                style={
+                  passwordValidate
+                    ? styles.textInputBoxView
+                    : styles.textInputBoxViewError
+                }>
                 <View style={styles.passwordBoxInput}>
                   <TextInput
                     style={styles.textInputTextView}
                     placeholder={'Password'}
                     placeholderTextColor={'#7d7d7d'}
                     secureTextEntry={secureTextEntryValue}
+                    onChangeText={text => {
+                      this.validate(text, 'password');
+                    }}
                   />
                 </View>
                 <View style={styles.eyeImageView}>
@@ -132,27 +195,51 @@ class Login extends React.Component {
               </View>
             </View>
             <View style={styles.textInputFieldsView}>
-              <View style={styles.textInputBoxView}>
+              <View
+                style={
+                  emailValidate
+                    ? styles.textInputBoxView
+                    : styles.textInputBoxViewError
+                }>
                 <TextInput
                   style={styles.textInputTextView}
                   placeholder={'Email address'}
                   placeholderTextColor={'#7d7d7d'}
+                  onChangeText={text => {
+                    this.validate(text, 'email');
+                  }}
                 />
               </View>
-              <View style={styles.textInputBoxView}>
+              <View
+                style={
+                  usernameValidate
+                    ? styles.textInputBoxView
+                    : styles.textInputBoxViewError
+                }>
                 <TextInput
                   style={styles.textInputTextView}
                   placeholder={'Username'}
                   placeholderTextColor={'#7d7d7d'}
+                  onChangeText={text => {
+                    this.validate(text, 'username');
+                  }}
                 />
               </View>
-              <View style={styles.textInputBoxView}>
+              <View
+                style={
+                  passwordValidate
+                    ? styles.textInputBoxView
+                    : styles.textInputBoxViewError
+                }>
                 <View style={styles.passwordBoxInput}>
                   <TextInput
                     style={styles.textInputTextView}
                     placeholder={'Password'}
                     placeholderTextColor={'#7d7d7d'}
                     secureTextEntry={secureTextEntryValue}
+                    onChangeText={text => {
+                      this.validate(text, 'password');
+                    }}
                   />
                 </View>
                 <View style={styles.eyeImageView}>
@@ -162,13 +249,21 @@ class Login extends React.Component {
                   </TouchableOpacity>
                 </View>
               </View>
-              <View style={styles.textInputBoxView}>
+              <View
+                style={
+                  matchPassword
+                    ? styles.textInputBoxView
+                    : styles.textInputBoxViewError
+                }>
                 <View style={styles.passwordBoxInput}>
                   <TextInput
                     style={styles.textInputTextView}
                     placeholder={'Repeat Password'}
                     placeholderTextColor={'#7d7d7d'}
                     secureTextEntry={secureTextEntryValue}
+                    onChangeText={text => {
+                      this.matchPassword(text);
+                    }}
                   />
                 </View>
                 <View style={styles.eyeImageView}>
@@ -270,12 +365,24 @@ const styles = StyleSheet.create({
     width: '70%',
     borderColor: colorConstants.otherTextColor,
     borderBottomWidth: 0.5,
+    borderBottomColor: '#000',
     marginBottom: 10,
     flexDirection: 'row',
     marginTop: 15,
     // backgroundColor: 'green',
   },
-  textInputTextView: {height: 40, marginBottom: 10},
+  textInputBoxViewError: {
+    height: 40,
+    width: '70%',
+    borderColor: colorConstants.otherTextColor,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#f00',
+    marginBottom: 10,
+    flexDirection: 'row',
+    marginTop: 15,
+    // backgroundColor: 'green',
+  },
+  textInputTextView: {height: 40, marginBottom: 10, width: '100%'},
   headerView: {
     flexDirection: 'row',
     flex: 0.13,
