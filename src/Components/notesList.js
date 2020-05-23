@@ -5,13 +5,18 @@ import {
   SafeAreaView,
   StyleSheet,
   Image,
+  AsyncStorage,
   ImageBackground,
   Text,
   TouchableOpacity,
 } from 'react-native';
 import {colorConstants, imageConstants} from '../config/constants';
-import {fetchVideosApi} from '../Services/Authentication/action';
-import imageUrl from '../config/env';
+import {connect} from 'react-redux';
+import {
+  signUpUser,
+  loginUser,
+  toggleSuccess,
+} from '../Services/Authentication/action';
 
 class notesList extends React.Component {
   constructor(props) {
@@ -20,8 +25,20 @@ class notesList extends React.Component {
       activeIndex: 0,
     };
   }
+  _logout = async () => {
+    await AsyncStorage.clear();
+    this.props.toggleSplash();
+    this.props.navigation.navigate('LoginScreen');
+  };
+  _storeData = async () => {
+    try {
+      await AsyncStorage.setItem('token', JSON.stringify(this.props.token));
+    } catch (error) {
+      console.warn('error in saving async');
+    }
+  };
   componentDidMount() {
-    // console.log(this.props.videosData.results);
+    this._storeData();
   }
 
   render() {
@@ -37,4 +54,18 @@ const styles = StyleSheet.create({
   },
 });
 
-export default notesList;
+const mapStateToProps = state => ({
+  success: state.homeReducer.isSuccess,
+  loading: state.homeReducer.isLoading,
+  token: state.homeReducer.token,
+});
+
+const mapDispatchToProps = {
+  loginUser: loginUser,
+  toggleSucess: toggleSuccess,
+  signUpUser: signUpUser,
+};
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(notesList);

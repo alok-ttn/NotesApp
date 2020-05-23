@@ -1,8 +1,22 @@
-const apiURl =
-  'https://api.themoviedb.org/3/trending/all/day?api_key=820016b7116f872f5f27bf56f9fdfb66';
-const baseURL = 'https://image.tmdb.org/t/p/w500';
+const baseURL = 'https://nodejsapp20.herokuapp.com/api';
+
+const apiConfig = {
+  authenticationApi: {
+    loginUserHandle: `${baseURL}/authenticate/`,
+  },
+  fetchDataApi: {
+    fetchNotes: `${baseURL}/notes/`,
+  },
+  createApi: {
+    createNotes: `${baseURL}/notes/`,
+    createUser: `${baseURL}/users/`,
+  },
+  deleteData: {
+    deleteNote: `${baseURL}/notes/`,
+  },
+};
 
 export default {
-  apiURl,
+  apiConfig,
   baseURL,
 };

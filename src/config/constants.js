@@ -14,4 +14,5 @@ export const imageConstants = {
   twitter: require('../Assets/twitter.png'),
   facebook: require('../Assets/facebook.png'),
   github: require('../Assets/github.png'),
+  splashLogo: require('../Assets/SplashLogo.png'),
 };

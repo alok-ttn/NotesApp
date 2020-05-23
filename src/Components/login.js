@@ -7,26 +7,33 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  Animated,
+  Alert,
 } from 'react-native';
 import ActivityIndicator from './activityIndicator';
 import {GoogleSignin, statusCodes} from '@react-native-community/google-signin';
 import {LoginManager} from 'react-native-fbsdk';
 import {colorConstants, imageConstants} from '../config/constants';
+import {connect} from 'react-redux';
+import {
+  loginUser,
+  toggleSuccess,
+  signUpUser,
+} from '../Services/Authentication/action';
 class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       toggleHeader: 0,
-      username: '',
+      username: null,
       usernameValidate: true,
-      password: '',
+      password: null,
       passwordValidate: true,
-      email: '',
+      email: null,
       emailValidate: true,
       secureTextEntryValue: true,
       matchPassword: true,
       userInfo: '',
+      socialId: null,
     };
   }
 
@@ -36,7 +43,6 @@ class Login extends React.Component {
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
       this.setState({userInfo: userInfo});
-      console.warn(userInfo);
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         // user cancelled the login flow
@@ -116,6 +122,8 @@ class Login extends React.Component {
       secureTextEntryValue,
       username,
       password,
+      email,
+      socialId,
       toggleHeader,
       usernameValidate,
       matchPassword,
@@ -323,7 +331,19 @@ class Login extends React.Component {
               </View>
             </View>
             <View style={styles.buttonFlexView}>
-              <TouchableOpacity style={styles.loginButtonView}>
+              <TouchableOpacity
+                style={styles.loginButtonView}
+                onPress={() => {
+                  if (
+                    username !== null &&
+                    password !== null &&
+                    email !== null
+                  ) {
+                    this.props.signUpUser(username, password, email, socialId);
+                  } else {
+                    Alert.alert('input all details');
+                  }
+                }}>
                 <View style={styles.loginView}>
                   <Image
                     source={imageConstants.tick}
@@ -349,6 +369,24 @@ class Login extends React.Component {
       webClientId:
         '240825025999-vmuqtfaeqitqmchvno27fc9sgk3a3loq.apps.googleusercontent.com', // client ID of type WEB for your server (needed to verify user ID and offline access)
     });
+  }
+  static getDerivedStateFromProps(props, state) {
+    const {navigation} = props;
+    if (props.success === 1 && props.token !== null) {
+      navigation.reset({
+        index: 0,
+        routes: [{name: 'notesList'}],
+      });
+    }
+    if (props.success === 2) {
+      Alert.alert('Error', 'Wrong Login Credentials', [
+        {
+          text: 'Try Again',
+          onPress: () => props.toggleSucess(),
+        },
+      ]);
+    }
+    return null;
   }
 }
 
@@ -489,4 +527,18 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Login;
+const mapStateToProps = state => ({
+  success: state.homeReducer.isSuccess,
+  loading: state.homeReducer.isLoading,
+  token: state.homeReducer.token,
+});
+
+const mapDispatchToProps = {
+  loginUser: loginUser,
+  toggleSucess: toggleSuccess,
+  signUpUser: signUpUser,
+};
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Login);

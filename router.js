@@ -4,7 +4,10 @@ import {NavigationContainer} from '@react-navigation/native';
 import LoginScreen from './src/Components/login';
 import * as React from 'react';
 import notesList from './src/Components/notesList';
+import Splash from './src/Components/splash';
 import {createDrawerNavigator} from '@react-navigation/drawer';
+import {Provider} from 'react-redux';
+import store from './src/Services/rootReducer';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -25,6 +28,11 @@ const MyStack = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen
+        name="Splash"
+        component={Splash}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
         name="LoginScreen"
         component={LoginScreen}
         options={{headerShown: false}}
@@ -40,9 +48,11 @@ const MyStack = () => {
 
 const App = () => {
   return (
-    <NavigationContainer>
-      <MyStack />
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer>
+        <MyStack />
+      </NavigationContainer>
+    </Provider>
   );
 };
 
