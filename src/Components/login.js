@@ -8,6 +8,7 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
+  AsyncStorage,
 } from 'react-native';
 import ActivityIndicator from './activityIndicator';
 import {GoogleSignin, statusCodes} from '@react-native-community/google-signin';
@@ -18,6 +19,7 @@ import {
   loginUser,
   toggleSuccess,
   signUpUser,
+  socialSignIn,
 } from '../Services/Authentication/action';
 class Login extends React.Component {
   constructor(props) {
@@ -36,13 +38,18 @@ class Login extends React.Component {
       socialId: null,
     };
   }
-
+  _logout = async () => {
+    await AsyncStorage.clear();
+    this.props.toggleSplash();
+    this.props.navigation.navigate('LoginScreen');
+  };
   // Somewhere in your code
   signIn = async () => {
     try {
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
-      this.setState({userInfo: userInfo});
+      this.props.socialSignIn(userInfo.user);
+      console.log(userInfo);
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         // user cancelled the login flow
@@ -210,14 +217,24 @@ class Login extends React.Component {
             <View style={styles.buttonFlexView}>
               <TouchableOpacity
                 style={styles.loginButtonView}
-                onPress={() => navigation.navigate('notesList')}>
-                <View style={styles.loginView}>
-                  <Image
-                    source={imageConstants.tick}
-                    style={styles.tickImageView}
-                  />
-                  <Text style={styles.loginTextView}>LOG IN</Text>
-                </View>
+                onPress={() => {
+                  if (username !== null && password !== null) {
+                    this.props.loginUser(username, password);
+                  } else {
+                    Alert.alert('input all details');
+                  }
+                }}>
+                {this.props.loading === 0 ? (
+                  <View style={styles.loginView}>
+                    <Image
+                      source={imageConstants.tick}
+                      style={styles.tickImageView}
+                    />
+                    <Text style={styles.loginTextView}>LOG IN</Text>
+                  </View>
+                ) : (
+                  <ActivityIndicator />
+                )}
               </TouchableOpacity>
             </View>
             <View style={styles.loginWithView}>
@@ -365,6 +382,7 @@ class Login extends React.Component {
   }
 
   componentDidMount() {
+    this._logout();
     GoogleSignin.configure({
       webClientId:
         '240825025999-vmuqtfaeqitqmchvno27fc9sgk3a3loq.apps.googleusercontent.com', // client ID of type WEB for your server (needed to verify user ID and offline access)
@@ -537,6 +555,7 @@ const mapDispatchToProps = {
   loginUser: loginUser,
   toggleSucess: toggleSuccess,
   signUpUser: signUpUser,
+  socialSignIn: socialSignIn,
 };
 export default connect(
   mapStateToProps,

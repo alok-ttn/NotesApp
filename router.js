@@ -1,29 +1,68 @@
 /* eslint-disable react-native/no-inline-styles */
+import {
+  View,
+  SafeAreaView,
+  Text,
+  Image,
+  StyleSheet,
+  Dimensions,
+  AsyncStorage,
+} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
-import {NavigationContainer} from '@react-navigation/native';
+import {
+  NavigationContainer,
+  DarkTheme,
+  DefaultTheme,
+} from '@react-navigation/native';
 import LoginScreen from './src/Components/login';
 import * as React from 'react';
 import notesList from './src/Components/notesList';
 import Splash from './src/Components/splash';
-import {createDrawerNavigator} from '@react-navigation/drawer';
+import {
+  DrawerContentScrollView,
+  createDrawerNavigator,
+  DrawerItem,
+  DrawerItemList,
+} from '@react-navigation/drawer';
 import {Provider} from 'react-redux';
 import store from './src/Services/rootReducer';
-
+import {imageConstants, colorConstants} from './src/config/constants';
+import {DrawerContent} from './src/Components/DrawerContent';
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      activeIndex: 0,
+    };
+  }
+  render() {
+    return <MyApp />;
+  }
+}
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
-
 function DrawerNavi() {
   return (
     <Drawer.Navigator
+      drawerContent={props => <DrawerContent {...props} />}
+      drawerContentOptions={{
+        activeTintColor: colorConstants.fontColourDark,
+        inactiveTintColor: colorConstants.fontColourDark,
+        itemStyle: {marginVertical: 5},
+      }}
       drawerStyle={{
-        backgroundColor: '#4a4a4a',
+        backgroundColor: colorConstants.backgroundColourLight,
         shadowColor: '#f2f2f2',
       }}>
-      <Drawer.Screen name="DarkMode" component={notesList} />
-      <Drawer.Screen name="Logout" component={notesList} />
+      <Drawer.Screen name="Notes Screen" component={notesList} />
     </Drawer.Navigator>
   );
 }
+const _logout = async () => {
+  await AsyncStorage.clear();
+  this.props.toggleSplash();
+  this.props.navigation.navigate('LoginScreen');
+};
 const MyStack = () => {
   return (
     <Stack.Navigator>
@@ -46,10 +85,10 @@ const MyStack = () => {
   );
 };
 
-const App = () => {
+const MyApp = () => {
   return (
     <Provider store={store}>
-      <NavigationContainer>
+      <NavigationContainer theme={DefaultTheme}>
         <MyStack />
       </NavigationContainer>
     </Provider>

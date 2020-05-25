@@ -1,15 +1,13 @@
 import {
-  TOGGLE_FLAG,
   LOGIN_START,
   LOGIN_FAILED,
   LOGIN_SUCCESS,
-  STORE_ACCESS,
-  STORE_SEARCH,
-  STORE_CONCEPT,
   TOGGLE_SUCCESS,
   TOGGLE_SPLASH,
+  GMAIL_SIGN_IN,
 } from './constant';
 const initialState = {
+  GmailUsername: '',
   isLoading: 0,
   isSuccess: 0,
   token: null,
@@ -19,6 +17,7 @@ const initialState = {
   isStore: false,
   isConceptLoading: true,
   conceptData: '',
+  dpUrl: '',
 };
 const homeReducer = (state = initialState, action) => {
   switch (action.type) {
@@ -33,24 +32,6 @@ const homeReducer = (state = initialState, action) => {
         isLoading: 0,
         token: action.data,
       };
-    case STORE_ACCESS:
-      return {
-        ...state,
-        isStore: true,
-        storeAcess: action.data,
-      };
-    case STORE_SEARCH:
-      return {
-        ...state,
-        searchData: action.data,
-        isSearching: true,
-      };
-    case STORE_CONCEPT:
-      return {
-        ...state,
-        conceptData: action.data,
-        isConceptLoading: false,
-      };
     case TOGGLE_SUCCESS:
       return {
         ...state,
@@ -61,6 +42,15 @@ const homeReducer = (state = initialState, action) => {
       return {
         ...state,
         token: action.data,
+      };
+    case GMAIL_SIGN_IN:
+      return {
+        ...state,
+        isSuccess: 1,
+        isLoading: 0,
+        token: action.data[0],
+        GmailUsername: action.data[1].name,
+        dpUrl: action.data[1].photo,
       };
     default:
       return state;
